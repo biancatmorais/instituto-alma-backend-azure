@@ -73,5 +73,5 @@ app.use('/api/ouvidoria', ouvidoriaRoutes);
 // Inicia o servidor
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
-  console.log('Acesse http://localhost:4000');
+  console.log('Acesse https://instituto-alma-backend-production.up.railway.app');
 });
