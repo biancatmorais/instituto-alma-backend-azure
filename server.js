@@ -8,19 +8,45 @@ require('./config/db.js');
 
 // Importação das rotas
 const ouvidoriaRoutes = require('./routes/ouvidoriaRoutes');
-const authRoutes = require('./routes/authRoutes');
-const eventoRoutes = require('./routes/eventoRoutes');
-const atividadeRoutes = require('./routes/atividadeRoutes');
-const documentoRoutes = require('./routes/documentoRoutes');
-const metaRoutes = require('./routes/metaRoutes');
-const inscricaoRoutes = require('./routes/inscricaoRoutes'); // <-- (NOVO)
+// ... (outras rotas)
 
 // Inicializa o Express
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// =======================================================
+// === 1. Configuração Específica do CORS (NOVO BLOCO) ===
+// =======================================================
+
+// Defina as origens permitidas
+// Use process.env para definir a URL de produção na nuvem (Railway)
+const allowedOrigins = process.env.FRONTEND_URL ? 
+  [process.env.FRONTEND_URL, 'http://localhost:3000'] : 
+  ['http://localhost:3000', 'http://localhost:4000']; // Default para desenvolvimento
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Permite requisições sem 'origin' (como apps mobile, Postman ou requests do servidor)
+    if (!origin) return callback(null, true); 
+
+    // Se a origem for permitida na lista
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      // Se não for permitida
+      console.log(`Origem não permitida: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
+  credentials: true, // Necessário para enviar cookies/tokens (JWT)
+};
+
+// Substitua a linha app.use(cors()); pela configuração específica
+app.use(cors(corsOptions)); 
+
+// =======================================================
 // === Middlewares ===
-app.use(cors()); 
 app.use(express.json()); 
 
 // Torna a pasta 'uploads' publicamente acessível
@@ -28,20 +54,13 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // === Rotas da API ===
 app.get('/', (req, res) => {
-  res.send('API do Instituto Alma está no ar!');
+  res.send('API do Instituto Alma está no ar!');
 });
 
-app.use('/api/ouvidoria', ouvidoriaRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/eventos', eventoRoutes);
-app.use('/api/atividades', atividadeRoutes);
-app.use('/api/documentos', documentoRoutes);
-app.use('/api/metas', metaRoutes);
-app.use('/api/inscricoes', inscricaoRoutes); // <-- (NOVO)
-
+// ... (configuração das rotas)
 
 // Inicia o servidor
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-  console.log('Acesse http://localhost:4000');
+  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log('Acesse http://localhost:4000');
 });
