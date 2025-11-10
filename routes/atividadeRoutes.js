@@ -1,24 +1,36 @@
 const express = require('express');
 const router = express.Router();
-const atividadeController = require('../controllers/atividadeController');
+const cors = require('cors'); 
+// AQUI: Certifique-se que o nome do arquivo está correto.
+const atividadeController = require('../controllers/atividadeController'); 
 
 // Importa os "seguranças" (middlewares)
+// Verifique se o caminho abaixo está correto em relação à sua pasta 'routes'
 const { checkAdmin } = require('../middleware/authMiddleware.js');
-// (AGORA ESTÁ LIGADO)
 const { uploadAtividadeImages } = require('../middleware/uploadMiddleware.js');
 
-// --- ROTAS PÚBLICAS (Qualquer um pode ver) ---
+// Configuração do CORS
+const corsOptions = {
+    origin: '*', 
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+// --- ROTAS PÚBLICAS ---
 router.get('/', atividadeController.getAtividades);
 
-// --- ROTAS PRIVADAS (Só Admin pode acessar) ---
+// --- ROTAS PRIVADAS ---
 
-// (AGORA ESTÁ LIGADO)
-// A rota POST agora usa 3 middlewares em sequência:
-// 1. Verifica se é Admin
-// 2. Faz o upload das imagens
-// 3. Salva os dados no banco
-router.post('/', checkAdmin, uploadAtividadeImages, atividadeController.createAtividade);
+// Rota para LER UMA ATIVIDADE ESPECÍFICA POR ID
+router.get('/:id', cors(corsOptions), checkAdmin, atividadeController.getAtividadeById);
 
-router.delete('/:id', checkAdmin, atividadeController.deleteAtividade);
+// Rota para CRIAR (LINHA 28 no seu erro)
+router.post('/', cors(corsOptions), checkAdmin, uploadAtividadeImages, atividadeController.createAtividade);
+
+// Rota para ATUALIZAR
+router.put('/:id', cors(corsOptions), checkAdmin, uploadAtividadeImages, atividadeController.updateAtividade);
+
+// Rota para DELETAR
+router.delete('/:id', cors(corsOptions), checkAdmin, atividadeController.deleteAtividade);
 
 module.exports = router;
