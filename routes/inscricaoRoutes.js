@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const inscricaoController = require('../controllers/inscricaoController');
-
-// Importa o "segurança" (middleware)
 const { checkAdmin } = require('../middleware/authMiddleware.js');
 
 // --- ROTA PÚBLICA (Para o Modal "Me Notifique") ---
