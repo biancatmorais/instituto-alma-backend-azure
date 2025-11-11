@@ -1,17 +1,18 @@
 const mysql = require('mysql2');
 
-// --- ALTERADO: Usando createPool() em vez de createConnection() ---
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '', 
-  database: 'instituto_alma_db',
-  waitForConnections: true, // Espera se todas as conexões estiverem em uso
-  connectionLimit: 10,      // Limite máximo de conexões simultâneas
-  queueLimit: 0             // Sem limite de fila
-});
 
-// Obtém uma conexão e verifica se o Pool está funcionando
+const connectionString = process.env.DATABASE_URL;
+
+
+if (!connectionString) {
+    console.error("ERRO: Variável DATABASE_URL não encontrada. Certifique-se de que o MySQL está no Railway.");
+    
+}
+
+
+const pool = mysql.createPool(connectionString);
+
+
 pool.getConnection((err, connection) => {
   if (err) {
     console.error('--- ERRO AO INICIALIZAR O POOL DE CONEXÕES ---');
@@ -21,10 +22,9 @@ pool.getConnection((err, connection) => {
   }
   console.log('>>> POOL de Conexões MySQL iniciado com sucesso! (Conexões máximas: 10)');
   
-  // Libera a conexão imediatamente após o teste
-  connection.release();
+ 
+  connection.release();
 });
 
-// Exporta o pool (o pool tem o método .query, o que significa que
-// você não precisa mudar nada nos seus controllers: db.query(...) continua funcionando).
+
 module.exports = pool;
