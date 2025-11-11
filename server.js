@@ -1,0 +1,58 @@
+// --- CONFIGURAÇÃO DE AMBIENTE (DEVE SER A PRIMEIRA LINHA) ---
+require('dotenv').config(); 
+
+// Importações principais
+const express = require('express');
+const cors = require('cors'); 
+const path = require('path'); 
+
+// Força a conexão com o banco
+require('./config/db.js'); 
+
+// Importação das rotas
+const ouvidoriaRoutes = require('./routes/ouvidoriaRoutes');
+const authRoutes = require('./routes/authRoutes');
+const eventoRoutes = require('./routes/eventoRoutes');
+const atividadeRoutes = require('./routes/atividadeRoutes'); // CORRIGIDO: Removido o '=' extra aqui
+const documentoRoutes = require('./routes/documentoRoutes'); 
+const metaRoutes = require('./routes/metaRoutes'); 
+const inscricaoRoutes = require('./routes/inscricaoRoutes'); 
+const PagamentoRoutes = require('./routes/PagamentoRoutes'); 
+
+// Inicializa o Express
+const app = express();
+const PORT = process.env.PORT || 4000;
+
+// === Middlewares ===
+
+// Configuração CORS robusta (para ambiente local)
+app.use(cors({
+    origin: '*', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+    allowedHeaders: ['Content-Type', 'Authorization'], 
+})); 
+
+app.use(express.json()); 
+
+// Torna a pasta 'uploads' publicamente acessível
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// === Rotas da API ===
+app.get('/', (req, res) => {
+    res.send('API do Instituto Alma está no ar!');
+});
+
+app.use('/api/ouvidoria', ouvidoriaRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/eventos', eventoRoutes);
+app.use('/api/atividades', atividadeRoutes);
+app.use('/api/documentos', documentoRoutes); 
+app.use('/api/metas', metaRoutes); 
+app.use('/api/inscricoes', inscricaoRoutes); 
+app.use('/api/pagamentos', PagamentoRoutes); // Rota de Pagamentos
+
+// Inicia o servidor
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log('Acesse http://localhost:4000');
+});
