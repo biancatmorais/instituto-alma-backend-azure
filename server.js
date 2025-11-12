@@ -4,13 +4,14 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-// URL do frontend no Vercel (sem barra no final)
-const FRONTEND_URL = process.env.FRONTEND_URL || 'https://instituto-alma-frontend-deploy.vercel.app';
+// 🧩 Corrige a URL do frontend (sem barra no final)
+const FRONTEND_URL = process.env.FRONTEND_URL?.replace(/\/$/, '') 
+  || 'https://instituto-alma-frontend-deploy-w70nvoo6b.vercel.app'; // ✅ usa o domínio correto do Vercel
 
-// Conexão com o banco
+// 🔌 Conexão com o banco
 require('./config/db.js');
 
-// Importação das rotas
+// 📦 Importação das rotas
 const ouvidoriaRoutes = require('./routes/ouvidoriaRoutes');
 const authRoutes = require('./routes/authRoutes');
 const eventoRoutes = require('./routes/eventoRoutes');
@@ -20,11 +21,13 @@ const metaRoutes = require('./routes/metaRoutes');
 const inscricaoRoutes = require('./routes/inscricaoRoutes');
 const pagamentoRoutes = require('./routes/pagamentosRoutes'); 
 
-// Inicializa o Express
+// 🚀 Inicializa o Express
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// === Middlewares ===
+// === 🛡️ Middlewares ===
+
+// ⚙️ CORS: permite seu frontend no Vercel e localhost
 app.use(cors({
   origin: [
     'http://localhost:5173',
@@ -35,14 +38,18 @@ app.use(cors({
   credentials: true
 }));
 
+// 🔄 Middleware para lidar com preflight requests
+app.options('*', cors());
+
+// 🔍 Middleware de parsing JSON
 app.use(express.json());
 
-// Pasta pública
+// 📂 Pasta pública para imagens e uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// === Rotas ===
+// === 🌐 Rotas ===
 app.get('/', (req, res) => {
-  res.send('API do Instituto Alma está no ar!');
+  res.send('🚀 API do Instituto Alma está no ar e protegida com CORS!');
 });
 
 app.use('/api/ouvidoria', ouvidoriaRoutes);
@@ -54,8 +61,10 @@ app.use('/api/metas', metaRoutes);
 app.use('/api/inscricoes', inscricaoRoutes);
 app.use('/api/pagamentos', pagamentoRoutes);
 
-// === Inicia o servidor ===
+// === ▶️ Inicia o servidor ===
 app.listen(PORT, () => {
   console.log(`✅ Servidor rodando na porta ${PORT}`);
-  console.log(`🌐 CORS permitido para: ${FRONTEND_URL} e http://localhost:5173`);
+  console.log(`🌐 CORS habilitado para:`);
+  console.log(`   - ${FRONTEND_URL}`);
+  console.log(`   - http://localhost:5173`);
 });
