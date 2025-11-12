@@ -56,7 +56,7 @@ app.use('/api/atividades', atividadeRoutes);
 app.use('/api/documentos', documentoRoutes); 
 app.use('/api/metas', metaRoutes); 
 app.use('/api/inscricoes', inscricaoRoutes); 
-app.use('/api/pagamentos', PagamentoRoutes); // Rota de Pagamentos
+app.use('/api/pagamentos', pagamentoRoutes); // Rota de Pagamentos
 
 // Inicia o servidor
 app.listen(PORT, () => {
