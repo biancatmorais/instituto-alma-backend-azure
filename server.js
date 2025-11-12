@@ -1,13 +1,12 @@
-// --- CONFIGURAÇÃO DE AMBIENTE (DEVE SER A PRIMEIRA LINHA) ---
+
 require('dotenv').config(); 
 
-// Importações principais
+
 const express = require('express');
 const cors = require('cors'); 
 const path = require('path'); 
 
-// Força a conexão com o banco
-// O require() deve estar aqui, mas o código de conexão deve ser ajustado para não travar o app se falhar!
+
 require('./config/db.js'); 
 
 // Importação das rotas
@@ -18,10 +17,9 @@ const atividadeRoutes = require('./routes/atividadeRoutes');
 const documentoRoutes = require('./routes/documentoRoutes'); 
 const metaRoutes = require('./routes/metaRoutes'); 
 const inscricaoRoutes = require('./routes/inscricaoRoutes'); 
-// CORREÇÃO: NOME MINÚSCULO/CASE-SENSITIVE para funcionar no Linux do Railway
-const PagamentoRoutes = require('./routes/pagamentosRoutes'); 
-// OU se o seu arquivo for 'routes/pagamentos.js' use: 
-// const PagamentoRoutes = require('./routes/pagamentos'); 
+const pagamentoRoutes = require('./routes/pagamentosRoutes'); 
+app.use('/api/pagamentos', pagamentoRoutes);
+
 
 
 // Inicializa o Express
