@@ -4,10 +4,8 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-// 🧩 Corrige a URL do frontend (sem barra no final)
-const FRONTEND_URL =
-  (process.env.FRONTEND_URL?.replace(/\/$/, '')) ||
-  'https://instituto-alma-frontend-deploy-w70nvoo6b.vercel.app';
+
+require('./config/db.js');
 
 // 🔌 Conexão com o banco
 require('./config/db.js');
@@ -21,6 +19,7 @@ const documentoRoutes = require('./routes/documentoRoutes');
 const metaRoutes = require('./routes/metaRoutes');
 const inscricaoRoutes = require('./routes/inscricaoRoutes');
 const pagamentoRoutes = require('./routes/pagamentosRoutes');
+// app.use('/api/pagamentos', pagamentoRoutes); // Linha duplicada, removida se já existe abaixo
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -62,7 +61,7 @@ app.use('/api/atividades', atividadeRoutes);
 app.use('/api/documentos', documentoRoutes);
 app.use('/api/metas', metaRoutes);
 app.use('/api/inscricoes', inscricaoRoutes);
-app.use('/api/pagamentos', pagamentoRoutes);
+app.use('/api/pagamentos', pagamentoRoutes); // Rota de Pagamentos
 
 // === ▶️ Inicia o servidor ===
 app.listen(PORT, () => {
