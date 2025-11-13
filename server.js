@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -8,7 +7,10 @@ const path = require('path');
 
 require('./config/db.js');
 
-// Importação das rotas
+// 🔌 Conexão com o banco
+require('./config/db.js');
+
+// 📦 Importação das rotas
 const ouvidoriaRoutes = require('./routes/ouvidoriaRoutes');
 const authRoutes = require('./routes/authRoutes');
 const eventoRoutes = require('./routes/eventoRoutes');
@@ -19,31 +21,37 @@ const inscricaoRoutes = require('./routes/inscricaoRoutes');
 const pagamentoRoutes = require('./routes/pagamentosRoutes');
 // app.use('/api/pagamentos', pagamentoRoutes); // Linha duplicada, removida se já existe abaixo
 
-
-// Inicializa o Express
 const app = express();
-// Usa a porta fornecida pelo ambiente (Railway), senão usa 4000 localmente
 const PORT = process.env.PORT || 4000;
 
-// === Middlewares ===
+// === 🛡️ CORS global e forçado ===
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', FRONTEND_URL);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
-// Configuração CORS robusta
-// *** IMPORTANTE: Para produção final, você deve mudar '*' para as URLs do Vercel permitidas. ***
+// Middleware do cors (em segundo lugar)
 app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: [FRONTEND_URL, 'http://localhost:5173'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
 
 app.use(express.json());
 
-// Torna a pasta 'uploads' publicamente acessível
+// 📂 Pasta pública
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// === Rotas da API ===
-// Rota principal (apenas para verificar se a API está no ar)
+// === 🌐 Rotas ===
 app.get('/', (req, res) => {
-    res.send('API do Instituto Alma está no ar!');
+  res.send('🚀 API do Instituto Alma está no ar com CORS habilitado!');
 });
 
 app.use('/api/ouvidoria', ouvidoriaRoutes);
@@ -55,8 +63,10 @@ app.use('/api/metas', metaRoutes);
 app.use('/api/inscricoes', inscricaoRoutes);
 app.use('/api/pagamentos', pagamentoRoutes); // Rota de Pagamentos
 
-// Inicia o servidor
+// === ▶️ Inicia o servidor ===
 app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
-    console.log(`Acesse localmente em: http://localhost:${PORT}`);
+  console.log(`✅ Servidor rodando na porta ${PORT}`);
+  console.log(`🌐 CORS habilitado para:`);
+  console.log(`   - ${FRONTEND_URL}`);
+  console.log(`   - http://localhost:5173`);
 });
