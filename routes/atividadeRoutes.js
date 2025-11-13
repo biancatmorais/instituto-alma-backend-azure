@@ -2,15 +2,13 @@ const express = require('express');
 const router = express.Router();
 const atividadeController = require('../controllers/atividadeController');
 
-
 const { checkAdmin } = require('../middleware/authMiddleware.js');
-
 const { uploadAtividadeImages } = require('../middleware/uploadMiddleware.js');
 
 
 router.get('/', atividadeController.getAtividades);
 
-router.get('/:id', checkAdmin, atividadeController.getAtividadeById);
+router.get('/:id', atividadeController.getAtividadeById);
 
 router.post('/', checkAdmin, uploadAtividadeImages, atividadeController.createAtividade);
 
