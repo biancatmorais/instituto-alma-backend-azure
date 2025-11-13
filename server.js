@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 // [server.js ou app.js]
 
 // Importações principais
+=======
+require('dotenv').config();
+>>>>>>> eb02db80e35b0130d499aa434643a10ba9b4403e
 const express = require('express');
 const cors = require('cors');
 const path = require('path'); 
@@ -16,6 +20,11 @@ const atividadeRoutes = require('./routes/atividadeRoutes');
 const documentoRoutes = require('./routes/documentoRoutes'); 
 const metaRoutes = require('./routes/metaRoutes'); 
 const inscricaoRoutes = require('./routes/inscricaoRoutes'); 
+<<<<<<< HEAD
+=======
+// 💡 CORREÇÃO 1: Importe as rotas de pagamento
+const paymentRoutes = require('./routes/paymentRoutes'); 
+>>>>>>> eb02db80e35b0130d499aa434643a10ba9b4403e
 
 // Inicializa o Express
 const app = express();
@@ -25,12 +34,35 @@ const PORT = process.env.PORT || 4000;
 
 // Configuração CORS robusta (para ambiente local)
 app.use(cors({
+<<<<<<< HEAD
     origin: '*', 
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
     allowedHeaders: ['Content-Type', 'Authorization'], 
 })); 
 
 app.use(express.json()); 
+=======
+    origin: '*', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+    allowedHeaders: ['Content-Type', 'Authorization'], 
+})); 
+
+// 🚨 ATENÇÃO: Esta é a configuração padrão. Para Webhooks, você precisa de um middleware especial.
+// Vamos ajustar o middleware para suportar o Webhook do Stripe:
+app.use(express.json({
+    // Aumenta o limite para garantir que o corpo do webhook não seja rejeitado
+    limit: '50mb', 
+    // É crucial que o Webhook do Stripe NÃO use este parser.
+    // Ele será aplicado a todas as rotas, exceto a rota específica do Webhook (se você a adicionar).
+    verify: (req, res, buf) => {
+        // Armazena o corpo RAW da requisição para o processamento do Webhook
+        if (req.originalUrl === '/api/webhook-stripe') { 
+            req.rawBody = buf.toString();
+        }
+    }
+}));
+
+>>>>>>> eb02db80e35b0130d499aa434643a10ba9b4403e
 
 // Torna a pasta 'uploads' publicamente acessível
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -40,6 +72,10 @@ app.get('/', (req, res) => {
   res.send('API do Instituto Alma está no ar!');
 });
 
+<<<<<<< HEAD
+=======
+// Rotas de Entidades
+>>>>>>> eb02db80e35b0130d499aa434643a10ba9b4403e
 app.use('/api/ouvidoria', ouvidoriaRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/eventos', eventoRoutes);
@@ -47,6 +83,12 @@ app.use('/api/atividades', atividadeRoutes);
 app.use('/api/documentos', documentoRoutes); 
 app.use('/api/metas', metaRoutes); 
 app.use('/api/inscricoes', inscricaoRoutes); 
+<<<<<<< HEAD
+=======
+
+// 💡 CORREÇÃO 2: Adicione a rota de pagamento
+app.use('/api', paymentRoutes); // Note que o seu paymentRoutes já contém o /create-payment-intent
+>>>>>>> eb02db80e35b0130d499aa434643a10ba9b4403e
 
 // Inicia o servidor
 app.listen(PORT, () => {
